@@ -1,14 +1,19 @@
 from flask import Flask, request, jsonify
 import requests
+import logging
 
 app = Flask(__name__)
 
-OVMS_API_URL = "http://model-server:9001/v1/models/fast_neural_style:predict"
+# Set up logging
+logging.basicConfig(filename='api.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+OVMS_API_URL = "http://model-server:8080/v1/models/fast-neural-style-mosaic:predict"
 
 @app.route("/api/style-transfer", methods=["POST"])
 def style_transfer():
     image = request.files.get("image")
     if not image:
+        logging.error("No image uploaded")
         return jsonify({"error": "No image uploaded"}), 400
 
     # Save the image to a temporary file
@@ -21,6 +26,7 @@ def style_transfer():
 
     response = requests.post(OVMS_API_URL, data=image_data, headers={"Content-Type": "application/octet-stream"})
     if not response.ok:
+        logging.error("Style transfer failed")
         return jsonify({"error": "Style transfer failed"}), 500
 
     styled_image_data = response.content
@@ -30,6 +36,7 @@ def style_transfer():
     with open(styled_image_path, "wb") as f:
         f.write(styled_image_data)
 
+    logging.info("Style transfer successful")
     return jsonify({"styled_image": styled_image_path}), 200
 
 
