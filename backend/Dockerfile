@@ -1,5 +1,5 @@
 # Backend: Set up the Flask API
-FROM python:3.8
+FROM python:3.13.11
 
 WORKDIR /app
 
