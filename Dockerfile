@@ -1,5 +1,5 @@
 # Backend: Set up the Flask API
-FROM python:3.8 AS backend-builder
+FROM python:3.14.3 AS backend-builder
 
 WORKDIR /app
 COPY backend/requirements.txt ./
@@ -17,7 +17,7 @@ COPY frontend ./
 RUN npm run build
 
 # Final image: Combine the frontend and backend
-FROM python:3.8
+FROM python:3.14.3
 
 WORKDIR /app
 
